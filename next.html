@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>撮影と確認問題</title>
+  <title>撮影ページ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -49,23 +49,9 @@
       margin-top: 0.5em;
       line-height: 1.6;
     }
-    .question {
-      margin-top: 2em;
-      font-size: 1.1em;
-    }
-    .answer-btn {
-      background: #ff9800;
-      color: white;
-    }
   </style>
 </head>
 <body>
-  <div class="question">
-    Q. イベントの入場には何が必要ですか？<br>
-    <button class="answer-btn" onclick="checkAnswer(true)">顔写真の保存</button>
-    <button class="answer-btn" onclick="checkAnswer(false)">名前の入力</button>
-  </div>
-
   <video id="video" autoplay playsinline muted></video>
   <div class="notice">※顔がはっきり映るように撮影してください</div>
   <button id="captureBtn">撮影する</button>
@@ -93,7 +79,7 @@
 
     let serialCount = 1;
     let imageSaved = false;
-    let isAnsweredCorrectly = false;
+    const answerText = "顔写真の保存"; // 固定文言として描画
 
     async function startCamera() {
       try {
@@ -114,6 +100,15 @@
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // 整理番号と答えを画像に描画
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`整理番号: #${String(serialCount).padStart(4, '0')}`, 20, canvas.height - 45);
+      ctx.fillText(`答え: ${answerText}`, 20, canvas.height - 15);
+
       saveBtn.style.display = 'inline-block';
       serialNumber.style.display = 'block';
       serialNumber.textContent = `整理番号: #${String(serialCount).padStart(4, '0')}`;
@@ -127,26 +122,9 @@
       link.href = canvas.toDataURL('image/png');
       link.click();
       imageSaved = true;
-      checkReady();
+      nextBtn.style.display = 'inline-block';
+      nextBtn.disabled = false;
     });
-
-    function checkAnswer(correct) {
-      if (correct) {
-        alert('正解です！');
-        isAnsweredCorrectly = true;
-        nextBtn.style.display = 'inline-block';
-        checkReady();
-      } else {
-        alert('不正解です。もう一度選んでください。');
-      }
-    }
-
-    function checkReady() {
-      if (isAnsweredCorrectly) {
-        nextBtn.style.display = 'inline-block';
-        nextBtn.disabled = !imageSaved;
-      }
-    }
 
     nextBtn.addEventListener('click', () => {
       if (!imageSaved) {
