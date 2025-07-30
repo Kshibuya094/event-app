@@ -2,61 +2,89 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スマホ診断カメラ</title>
+  <title>スマホ対応カメラ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { text-align: center; padding: 2em; font-family: sans-serif; }
-    video, canvas { width: 100%; max-width: 480px; margin-top: 1em; background: #000; border-radius: 12px; }
-    button { margin: 1em; padding: 1em 2em; font-size: 1.1em; background: #0078D4; color: white; border: none; border-radius: 8px; cursor: pointer; }
-    pre { text-align: left; background: #eee; padding: 1em; border-radius: 8px; max-width: 480px; margin: 2em auto; overflow-x: auto; }
+    body {
+      text-align: center;
+      padding: 2em;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .notice {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 1em;
+    }
+    .guide-btn {
+      display: inline-block;
+      margin: 1em auto;
+      padding: 1em 2em;
+      font-size: 1em;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 1em;
+      background: #000;
+      border-radius: 12px;
+    }
+    button {
+      margin: 1em;
+      padding: 1em 2em;
+      font-size: 1.1em;
+      background: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>スマホ診断カメラ</h1>
+  <h1>スマホ対応カメラ映像</h1>
+  <p class="notice">※スマホで映像が表示されない場合は、ブラウザの「PC表示モード」に切り替えてください。</p>
+  <button class="guide-btn" onclick="alert('Safariの場合：共有ボタン →「デスクトップ用Webサイトを表示」\nChromeの場合：メニュー →「PC版サイト」')">
+    PC表示モードの切り替え方法を見る
+  </button>
   <video id="video" autoplay playsinline muted></video>
   <button id="captureBtn">撮影する</button>
   <canvas id="canvas" style="display:none;"></canvas>
-  <pre id="log"></pre>
 
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const captureBtn = document.getElementById('captureBtn');
-    const log = document.getElementById('log');
-
-    function writeLog(msg) {
-      console.log(msg);
-      log.textContent += msg + '\n';
-    }
 
     async function startCamera() {
-      writeLog('カメラ起動開始...');
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        writeLog('✅ ストリーム取得成功');
         video.srcObject = stream;
-
         setTimeout(() => {
-          video.play().then(() => {
-            writeLog('✅ video.play() 成功');
-          }).catch(err => {
-            writeLog('❌ video.play() 失敗: ' + err.message);
+          video.play().catch(err => {
+            console.error('video.play() 失敗:', err);
           });
         }, 100);
       } catch (err) {
-        writeLog('❌ getUserMedia 失敗: ' + err.message);
+        console.error('カメラ取得失敗:', err);
         alert('カメラの起動に失敗しました: ' + err.message);
       }
     }
 
     captureBtn.addEventListener('click', () => {
-      writeLog('📸 撮影ボタン押下');
       const ctx = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.style.display = 'block';
-      writeLog('✅ canvas に描画完了');
     });
 
     window.addEventListener('DOMContentLoaded', startCamera);
