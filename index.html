@@ -2,29 +2,64 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>クイズページ</title>
+  <title>入場確認クイズ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      padding: 2em;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+    .question {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+    .answer-btn {
+      margin: 0.5em;
+      padding: 1em 2em;
+      font-size: 1em;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #nextBtn {
+      margin-top: 2em;
+      padding: 1em 2em;
+      font-size: 1.1em;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h2>問題：消防車の色は？</h2>
-  <p>答え（ひらがな）を入力してください：</p>
-  <input type="text" id="answer">
-  <button onclick="checkAnswer()">確認</button>
-  <p id="result"></p>
+  <div class="question">
+    Q. イベントの入場には何が必要ですか？
+  </div>
+  <button class="answer-btn" onclick="checkAnswer(true)">顔写真の保存</button>
+  <button class="answer-btn" onclick="checkAnswer(false)">名前の入力</button>
+
+  <button id="nextBtn" onclick="goNext()">次へ進む</button>
 
   <script>
-    function checkAnswer() {
-      const input = document.getElementById("answer").value.trim();
-      const result = document.getElementById("result");
+    const nextBtn = document.getElementById('nextBtn');
 
-      if (input === "あか") {
-        result.textContent = "正解です！次のステップへ進んでください。";
-        sessionStorage.setItem("keyword", input); // キーワード保存
-        setTimeout(() => {
-          location.href = "next.html"; // ページ遷移
-        }, 1500); // 1.5秒後に遷移
+    function checkAnswer(correct) {
+      if (correct) {
+        nextBtn.style.display = 'inline-block';
       } else {
-        result.textContent = "不正解です。もう一度考えてみてください。";
+        alert('不正解です。もう一度選んでください。');
       }
+    }
+
+    function goNext() {
+      window.location.href = 'next.html';
     }
   </script>
 </body>
