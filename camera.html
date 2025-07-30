@@ -14,16 +14,17 @@
     h1 {
       margin-bottom: 1em;
     }
-    #startBtn {
+    #startBtn, #captureBtn {
       padding: 1em 2em;
       font-size: 1.2em;
+      margin: 1em;
       background: #0078D4;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    video {
+    video, canvas {
       margin-top: 2em;
       width: 100%;
       max-width: 480px;
@@ -33,21 +34,28 @@
 </head>
 <body>
   <h1>撮影ページ</h1>
-  <button id="startBtn">開始する</button>
+  <button id="startBtn">カメラを起動する</button>
+  <button id="captureBtn" style="display:none;">撮影する</button>
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" style="display:none;"></canvas>
 
   <script>
-    document.getElementById('startBtn').addEventListener('click', async () => {
+    const startBtn = document.getElementById('startBtn');
+    const captureBtn = document.getElementById('captureBtn');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+
+    startBtn.addEventListener('click', async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const video = document.createElement('video');
         video.srcObject = stream;
-        video.setAttribute('playsinline', 'true'); // iOS対応
-        video.autoplay = true;
-        document.body.appendChild(video);
+        captureBtn.style.display = 'inline-block';
       } catch (err) {
         alert('カメラの起動に失敗しました: ' + err.message);
       }
     });
-  </script>
-</body>
-</html>
+
+    captureBtn.addEventListener('click', () => {
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight
