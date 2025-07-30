@@ -71,4 +71,16 @@
     }
 
     function goNext() {
-      const
+      const now = new Date();
+      const hour = now.getHours();
+      const timeMessage = document.getElementById("timeMessage");
+
+      if (hour >= 10 && hour < 17) {
+        location.href = "next.html"; // 遷移先は適宜変更
+      } else {
+        timeMessage.textContent = "現在は受付時間外です（10:00〜17:00のみ進行可能）";
+      }
+    }
+  </script>
+</body>
+</html>
