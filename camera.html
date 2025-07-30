@@ -2,60 +2,44 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>撮影ページ</title>
+  <title>カメラテスト</title>
   <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 2em;
-      background: #f9f9f9;
-    }
-    h1 {
-      margin-bottom: 1em;
-    }
-    #startBtn, #captureBtn {
-      padding: 1em 2em;
-      font-size: 1.2em;
-      margin: 1em;
-      background: #0078D4;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    video, canvas {
-      margin-top: 2em;
-      width: 100%;
-      max-width: 480px;
-      border-radius: 12px;
-    }
+    body { text-align: center; padding: 2em; }
+    video { width: 100%; max-width: 480px; background: #000; }
+    button { margin: 1em; padding: 1em; font-size: 1em; }
   </style>
 </head>
 <body>
-  <h1>撮影ページ</h1>
-  <button id="startBtn">カメラを起動する</button>
-  <button id="captureBtn" style="display:none;">撮影する</button>
+  <h1>カメラ映像テスト</h1>
   <video id="video" autoplay playsinline></video>
+  <button id="captureBtn">撮影する</button>
   <canvas id="canvas" style="display:none;"></canvas>
 
   <script>
-    const startBtn = document.getElementById('startBtn');
-    const captureBtn = document.getElementById('captureBtn');
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
 
-    startBtn.addEventListener('click', async () => {
+    async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('カメラストリーム取得成功:', stream);
         video.srcObject = stream;
-        captureBtn.style.display = 'inline-block';
       } catch (err) {
+        console.error('カメラ取得失敗:', err);
         alert('カメラの起動に失敗しました: ' + err.message);
       }
-    });
+    }
 
     captureBtn.addEventListener('click', () => {
       const ctx = canvas.getContext('2d');
       canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'block';
+    });
+
+    startCamera();
+  </script>
+</body>
+</html>
