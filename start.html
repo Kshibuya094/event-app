@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>受付開始判定</title>
+  <title>スタートページ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -13,38 +13,30 @@
     button {
       font-size: 1em;
       padding: 0.6em 1.2em;
-      margin-top: 1em;
+      margin-top: 2em;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       background-color: #4CAF50;
       color: white;
     }
-    #message {
-      margin-top: 1em;
-      font-weight: bold;
-      color: red;
-    }
   </style>
 </head>
 <body>
-  <h2>イベント受付</h2>
-  <p>受付時間：23:25〜23:30</p>
-  <button onclick="checkTime()">受付を開始する</button>
-  <p id="message"></p>
+  <h2>スタートページ</h2>
+  <p>開始するには下のボタンを押してください。</p>
+  <button onclick="start()">開始する</button>
 
   <script>
-    function checkTime() {
-      const now = new Date();
-      const hour = now.getHours();
-      const minute = now.getMinutes();
-      const message = document.getElementById("message");
+    // 1端末1アクセス制限
+    if (localStorage.getItem("accessed")) {
+      alert("この端末ではすでにアクセス済みです。");
+      location.href = "error.html"; // エラーページに遷移（要作成）
+    }
 
-      if (hour === 23 && minute >= 25 && minute < 30) {
-        location.href = "index.html";
-      } else {
-        message.textContent = "現在は受付時間外です（23:25〜23:30のみ進行可能）";
-      }
+    function start() {
+      localStorage.setItem("accessed", "true"); // 初回アクセス記録
+      location.href = "index.html"; // クイズページへ遷移
     }
   </script>
 </body>
