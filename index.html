@@ -2,65 +2,72 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>入場確認クイズ</title>
+  <title>クイズページ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       text-align: center;
       padding: 2em;
       font-family: sans-serif;
-      background: #f0f0f0;
     }
-    .question {
-      font-size: 1.2em;
-      margin-bottom: 1em;
-    }
-    .answer-btn {
-      margin: 0.5em;
-      padding: 1em 2em;
+    input {
       font-size: 1em;
-      background: #ff9800;
-      color: white;
+      padding: 0.5em;
+      width: 200px;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin-top: 1em;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
+    }
+    #confirmBtn {
+      background-color: #2196F3;
+      color: white;
     }
     #nextBtn {
-      margin-top: 2em;
-      padding: 1em 2em;
-      font-size: 1.1em;
-      background: #4CAF50;
+      background-color: #4CAF50; /* 緑ボタンで統一 */
       color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
       display: none;
+    }
+    #result {
+      margin-top: 1em;
+      font-weight: bold;
+      color: red;
     }
   </style>
 </head>
 <body>
-  <div class="question">
-    Q. イベントの入場には何が必要ですか？
-  </div>
-  <button class="answer-btn" onclick="checkAnswer(true)">顔写真の保存</button>
-  <button class="answer-btn" onclick="checkAnswer(false)">名前の入力</button>
-
+  <h2>問題：消防車の色は？</h2>
+  <p>答え（ひらがな）を入力してください：</p>
+  <input type="text" id="answer">
+  <br>
+  <button id="confirmBtn" onclick="checkAnswer()">確認</button>
   <button id="nextBtn" onclick="goNext()">次へ進む</button>
+  <p id="result"></p>
 
   <script>
-    const nextBtn = document.getElementById('nextBtn');
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim();
+      const result = document.getElementById("result");
+      const nextBtn = document.getElementById("nextBtn");
 
-    function checkAnswer(correct) {
-      if (correct) {
-        nextBtn.style.display = 'inline-block';
+      if (input === "あか") {
+        result.textContent = ""; // 正解テキストは表示しない
+        sessionStorage.setItem("keyword", input); // キーワード保存
+        nextBtn.style.display = "inline-block"; // 緑ボタン表示
       } else {
-        alert('不正解です。もう一度選んでください。');
+        result.textContent = "不正解です。もう一度考えてみてください。";
+        nextBtn.style.display = "none"; // ボタン非表示
       }
     }
 
     function goNext() {
-      window.location.href = 'next.html';
+      location.href = "next.html"; // 遷移先は適宜変更
     }
   </script>
 </body>
 </html>
+
