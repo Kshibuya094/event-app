@@ -37,6 +37,12 @@
       color: #d32f2f;
       margin-top: 0.5em;
     }
+    .warning {
+      font-size: 1em;
+      color: #c62828;
+      margin-top: 1.5em;
+      line-height: 1.6;
+    }
     #nextBtn {
       background: #4CAF50;
       display: none;
@@ -49,6 +55,13 @@
   <button id="captureBtn">撮影する</button>
   <button id="saveBtn" style="display:none;">画像を保存する</button>
   <div class="serial" id="serialNumber" style="display:none;">整理番号: #0001</div>
+
+  <div class="warning" id="warningMessage" style="display:none;">
+    ※画像を保存してください。<br>
+    保存されていない場合、入場できません。<br>
+    入場時に保存画像を確認します。
+  </div>
+
   <button id="nextBtn">次へ進む</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
@@ -60,6 +73,7 @@
     const saveBtn = document.getElementById('saveBtn');
     const serialNumber = document.getElementById('serialNumber');
     const nextBtn = document.getElementById('nextBtn');
+    const warningMessage = document.getElementById('warningMessage');
 
     let serialCount = 1;
     let imageSaved = false;
@@ -87,6 +101,7 @@
       serialNumber.style.display = 'block';
       serialNumber.textContent = `整理番号: #${String(serialCount).padStart(4, '0')}`;
       serialCount++;
+      warningMessage.style.display = 'block';
     });
 
     saveBtn.addEventListener('click', () => {
@@ -110,3 +125,4 @@
   </script>
 </body>
 </html>
+
