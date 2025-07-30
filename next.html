@@ -45,7 +45,11 @@
       font-weight: bold;
       display: none;
       margin-top: 1em;
-      line-height: 1.6;
+      line-height: 1.8;
+      text-align: left;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -55,9 +59,13 @@
   <br>
   <button id="captureBtn" onclick="capture()">撮影する</button>
   <br><br>
-  <p id="warning">＊「整理券を保存」を押しダウンロード。
-                  ＊　保存した画像が整理券となります。
-                  ＊  ご入場の際に、保存された画像を確認いたします。</p>
+
+  <ul id="warning">
+    <li>＊「整理券を保存」を押して、画像をダウンロードしてください。</li>
+    <li>＊保存した画像が整理券となります。</li>
+    <li>＊ご入場の際に、保存された画像を確認いたします。</li>
+  </ul>
+
   <button id="saveBtn" onclick="saveImage()">整理券を保存</button>
   <button id="nextBtn" onclick="goNext()">次へ進む</button>
 
