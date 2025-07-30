@@ -27,7 +27,7 @@
       background-color: #2196F3;
       color: white;
     }
-    #nextBtn {
+    #saveBtn {
       background-color: #4CAF50;
       color: white;
       display: none;
@@ -36,6 +36,7 @@
     #warning {
       color: red;
       font-weight: bold;
+      display: none;
       margin-top: 0.5em;
     }
     #savedImage {
@@ -49,17 +50,17 @@
   <br>
   <button id="captureBtn" onclick="capture()">撮影する</button>
   <p id="warning">＊画像を保存してください</p>
+  <button id="saveBtn" onclick="saveImage()">保存する</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
   <div id="savedImage"></div>
-
-  <button id="nextBtn" onclick="goNext()">次へ進む</button>
 
   <script>
     const video = document.getElementById("video");
     const canvas = document.getElementById("canvas");
     const savedImage = document.getElementById("savedImage");
-    const nextBtn = document.getElementById("nextBtn");
+    const warning = document.getElementById("warning");
+    const saveBtn = document.getElementById("saveBtn");
 
     // カメラ起動
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -72,6 +73,7 @@
 
     function capture() {
       const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      const serial = generateSerial();
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -83,16 +85,26 @@
       savedImage.innerHTML = `
         <p>保存された画像：</p>
         <img src="${imgData}" width="300"><br>
+        <p>整理番号：${serial}</p>
         <p>答え：${keyword}</p>
       `;
 
-      nextBtn.style.display = "inline-block";
+      warning.style.display = "block";
+      saveBtn.style.display = "inline-block";
     }
 
-    function goNext() {
-      location.href = "confirm.html"; // 遷移先は適宜変更
+    function saveImage() {
+      // 保存処理は現場仕様に応じて実装（ここでは次ページ遷移）
+      location.href = "confirm.html";
+    }
+
+    function generateSerial() {
+      // 整理番号生成（例：日時＋ランダム）
+      const now = new Date();
+      const ymd = now.toISOString().slice(0,10).replace(/-/g,"");
+      const rand = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
+      return `${ymd}-${rand}`;
     }
   </script>
 </body>
 </html>
-
