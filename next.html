@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>撮影ページ</title>
+  <title>撮影と確認問題</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -11,15 +11,22 @@
       font-family: sans-serif;
       background: #f0f0f0;
     }
-    #captureBtn, #saveBtn, #nextBtn {
+    button {
       margin: 1em;
       padding: 1em 2em;
       font-size: 1.1em;
-      background: #0078D4;
-      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+    }
+    #captureBtn, #saveBtn {
+      background: #0078D4;
+      color: white;
+    }
+    #nextBtn {
+      background: #4CAF50;
+      color: white;
+      display: none;
     }
     video {
       width: 100%;
@@ -32,24 +39,29 @@
       font-weight: bold;
       margin-top: 1em;
     }
-    .notice {
+    .notice, .warning {
       font-size: 0.95em;
       color: #d32f2f;
       margin-top: 0.5em;
-    }
-    .warning {
-      font-size: 1em;
-      color: #c62828;
-      margin-top: 1.5em;
       line-height: 1.6;
     }
-    #nextBtn {
-      background: #4CAF50;
-      display: none;
+    .question {
+      margin-top: 2em;
+      font-size: 1.1em;
+    }
+    .answer-btn {
+      background: #ff9800;
+      color: white;
     }
   </style>
 </head>
 <body>
+  <div class="question">
+    Q. イベントの入場には何が必要ですか？<br>
+    <button class="answer-btn" onclick="checkAnswer(true)">顔写真の保存</button>
+    <button class="answer-btn" onclick="checkAnswer(false)">名前の入力</button>
+  </div>
+
   <video id="video" autoplay playsinline muted></video>
   <div class="notice">※顔がはっきり映るように撮影してください</div>
   <button id="captureBtn">撮影する</button>
@@ -77,6 +89,7 @@
 
     let serialCount = 1;
     let imageSaved = false;
+    let isAnsweredCorrectly = false;
 
     async function startCamera() {
       try {
@@ -110,14 +123,26 @@
       link.href = canvas.toDataURL('image/png');
       link.click();
       imageSaved = true;
-      nextBtn.style.display = 'inline-block';
+      checkReady();
     });
 
-    nextBtn.addEventListener('click', () => {
-      if (!imageSaved) {
-        alert('画像を保存してから次へ進んでください');
-        return;
+    function checkAnswer(correct) {
+      if (correct) {
+        alert('正解です！');
+        isAnsweredCorrectly = true;
+        checkReady();
+      } else {
+        alert('不正解です。もう一度選んでください。');
       }
+    }
+
+    function checkReady() {
+      if (imageSaved && isAnsweredCorrectly) {
+        nextBtn.style.display = 'inline-block';
+      }
+    }
+
+    nextBtn.addEventListener('click', () => {
       window.location.href = 'confirm.html'; // 次のページへ（必要に応じて変更）
     });
 
@@ -125,4 +150,3 @@
   </script>
 </body>
 </html>
-
