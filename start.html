@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>受付開始判定</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      padding: 2em;
+      font-family: sans-serif;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin-top: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    #message {
+      margin-top: 1em;
+      font-weight: bold;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>イベント受付</h2>
+  <p>受付時間：10:00〜17:00</p>
+  <button onclick="checkTime()">受付を開始する</button>
+  <p id="message"></p>
+
+  <script>
+    function checkTime() {
+      const now = new Date();
+      const hour = now.getHours();
+      const message = document.getElementById("message");
+
+      if (hour >= 10 && hour < 17) {
+        location.href = "index.html";
+      } else {
+        message.textContent = "現在は受付時間外です。時間内にQRコードを再度読み込んでください。";
+      }
+    }
+  </script>
+</body>
+</html>
