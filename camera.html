@@ -1,12 +1,53 @@
-<!-- camera.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>カメラページ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>撮影ページ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    #startBtn {
+      padding: 1em 2em;
+      font-size: 1.2em;
+      background: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    video {
+      margin-top: 2em;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 12px;
+    }
+  </style>
 </head>
 <body>
-  <h1>カメラページへようこそ</h1>
-  <p>このページは仮のカメラ画面です。</p>
+  <h1>撮影ページ</h1>
+  <button id="startBtn">開始する</button>
+
+  <script>
+    document.getElementById('startBtn').addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.setAttribute('playsinline', 'true'); // iOS対応
+        video.autoplay = true;
+        document.body.appendChild(video);
+      } catch (err) {
+        alert('カメラの起動に失敗しました: ' + err.message);
+      }
+    });
+  </script>
 </body>
 </html>
