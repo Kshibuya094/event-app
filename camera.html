@@ -54,4 +54,70 @@
 
     function getJSTNow() {
       const now = new Date();
-      return
+      return now.getTime() + (9 * 60 * 60 * 1000) - now.getTimezoneOffset() * 60 * 1000;
+    }
+
+    function isWithinAllowedTime() {
+      const nowJST = getJSTNow();
+      return nowJST >= startTime && nowJST <= endTime;
+    }
+
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          document.getElementById("video").srcObject = stream;
+        })
+        .catch(err => {
+          alert("カメラにアクセスできません：" + err.message);
+        });
+    }
+
+    function capture() {
+      const messageEl = document.getElementById("message");
+      messageEl.innerHTML = "";
+
+      if (!isWithinAllowedTime()) {
+        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。\n有効時間：2025年7月30日 22:25〜22:35";
+        return;
+      }
+
+      const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // キーワード描画
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`答え: ${keyword}`, 20, canvas.height - 30);
+    }
+
+    function saveImage() {
+      const messageEl = document.getElementById("message");
+      messageEl.innerHTML = "";
+
+      if (!isWithinAllowedTime()) {
+        messageEl.innerHTML = "現在は画像保存できません（時間外です）。";
+        return;
+      }
+
+      const canvas = document.getElementById("canvas");
+      const link = document.createElement("a");
+      link.download = "photo.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      startCamera();
+      const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      document.getElementById("keywordDisplay").textContent = `答え: ${keyword}`;
+    });
+  </script>
+</body>
+</html>
