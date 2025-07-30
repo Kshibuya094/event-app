@@ -13,7 +13,7 @@
     button {
       font-size: 1em;
       padding: 0.6em 1.2em;
-      margin-top: 2em;
+      margin-top: 1em;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -34,17 +34,17 @@
       location.href = "error.html"; // エラーページに遷移（要作成）
     }
 
-    // ✅ 時間制限（23:40〜23:45のみ許可）
+    // ✅ 時間制限（23:45〜23:50のみ許可）
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const totalMinutes = hours * 60 + minutes;
 
-    const startLimit = 23 * 60 + 40; // 23:25 → 1405分
-    const endLimit = 23 * 60 + 45;   // 23:30 → 1410分
+    const startLimit = 23 * 60 + 45; // 23:45 → 1425分
+    const endLimit = 23 * 60 + 50;   // 23:50 → 1430分
 
     if (totalMinutes < startLimit || totalMinutes > endLimit) {
-      alert("現在はアクセスできません（23:40〜23:45限定）");
+      alert("現在はアクセスできません（23:45〜23:50限定）");
       location.href = "error.html"; // エラーページに遷移（要作成）
     }
 
