@@ -1,56 +1,23 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>QRコード読み取り</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 2em;
-    }
-    #message {
-      margin-top: 1em;
-      color: red;
-      font-weight: bold;
-      white-space: pre-line;
-    }
-    #startBtn {
-      font-size: 1.2em;
-      padding: 1em 2em;
-      margin-top: 2em;
-    }
-  </style>
-</head>
-<body>
-  <h1>QRコード読み取り</h1>
-  <p>カメラを起動してQRコードを読み取ります。</p>
-  <button id="startBtn" onclick="startScan()">読み取り開始</button>
-  <div id="message"></div>
+<script>
+  // 有効時間設定（テスト用：今すぐ有効になる時間帯）
+  const startTime = new Date("2025-07-30T21:50:00+09:00");
+  const endTime   = new Date("2025-07-30T22:10:00+09:00");
 
-  <script>
-    // 有効時間設定（現場で変更する場合はここを修正）
-    const startTime = new Date("2025-08-01T10:00:00+09:00");
-    const endTime   = new Date("2025-08-01T10:10:00+09:00");
+  function isWithinAllowedTime() {
+    const now = new Date();
+    return now >= startTime && now <= endTime;
+  }
 
-    function isWithinAllowedTime() {
-      const now = new Date();
-      return now >= startTime && now <= endTime;
+  function startScan() {
+    const messageEl = document.getElementById("message");
+    messageEl.innerHTML = "";
+
+    if (!isWithinAllowedTime()) {
+      messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年7月30日 21:50〜22:10";
+      return;
     }
 
-    function startScan() {
-      const messageEl = document.getElementById("message");
-      messageEl.innerHTML = "";
-
-      if (!isWithinAllowedTime()) {
-        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年8月1日 10:00〜10:10";
-        return;
-      }
-
-      // ここにQR読み取り処理を実装（または ticket.html へ遷移）
-      window.location.href = "ticket.html"; // ←必要に応じて変更
-    }
-  </script>
-</body>
-</html>
+    // QR読み取り処理（または ticket.html へ遷移）
+    window.location.href = "ticket.html";
+  }
+</script>
