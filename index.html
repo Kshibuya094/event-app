@@ -28,7 +28,7 @@
       color: white;
     }
     #nextBtn {
-      background-color: #4CAF50;
+      background-color: #4CAF50; /* 緑ボタンで統一 */
       color: white;
       display: none;
     }
@@ -36,11 +36,6 @@
       margin-top: 1em;
       font-weight: bold;
       color: red;
-    }
-    #timeMessage {
-      margin-top: 1em;
-      font-weight: bold;
-      color: orange;
     }
   </style>
 </head>
@@ -52,7 +47,6 @@
   <button id="confirmBtn" onclick="checkAnswer()">確認</button>
   <button id="nextBtn" onclick="goNext()">次へ進む</button>
   <p id="result"></p>
-  <p id="timeMessage"></p>
 
   <script>
     function checkAnswer() {
@@ -61,25 +55,17 @@
       const nextBtn = document.getElementById("nextBtn");
 
       if (input === "あか") {
-        result.textContent = "";
-        sessionStorage.setItem("keyword", input);
-        nextBtn.style.display = "inline-block";
+        result.textContent = ""; // 正解テキストは表示しない
+        sessionStorage.setItem("keyword", input); // キーワード保存
+        nextBtn.style.display = "inline-block"; // 緑ボタン表示
       } else {
         result.textContent = "不正解です。もう一度考えてみてください。";
-        nextBtn.style.display = "none";
+        nextBtn.style.display = "none"; // ボタン非表示
       }
     }
 
     function goNext() {
-      const now = new Date();
-      const hour = now.getHours();
-      const timeMessage = document.getElementById("timeMessage");
-
-      if (hour >= 10 && hour < 17) {
-        location.href = "next.html"; // 遷移先は適宜変更
-      } else {
-        timeMessage.textContent = "現在は受付時間外です（10:00〜17:00のみ進行可能）";
-      }
+      location.href = "next.html"; // 遷移先は適宜変更
     }
   </script>
 </body>
