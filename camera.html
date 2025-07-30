@@ -1,16 +1,57 @@
-function isWithinAllowedTime() {
-  const now = new Date();
-  const jstNow = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // JST補正
-  const start = new Date("2025-07-30T22:25:00+09:00");
-  const end   = new Date("2025-07-30T22:35:00+09:00");
-  return jstNow >= start && jstNow <= end;
-}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>QRコード読み取りと撮影</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1em;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin: 0.5em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 1em;
+      color: red;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+    #keywordDisplay {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>QRコード読み取りと撮影</h1>
+  <div id="keywordDisplay">答え: （未取得）</div>
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="canvas"></canvas>
+  <br>
+  <button onclick="capture()">撮影する</button>
+  <button onclick="saveImage()">保存する</button>
+  <div id="message"></div>
 
-function capture() {
-  if (!isWithinAllowedTime()) {
-    alert("現在はQRコードの読み取り時間外です。\n有効時間：2025年7月30日 22:25〜22:35");
-    return;
-  }
+  <script>
+    // 有効時間（例：2025年7月30日 22:25〜22:35 JST）
+    const startTime = new Date("2025-07-30T22:25:00+09:00").getTime();
+    const endTime   = new Date("2025-07-30T22:35:00+09:00").getTime();
 
-  // 撮影処理続行
-}
+    function getJSTNow() {
+      const now = new Date();
+      return
