@@ -1,23 +1,109 @@
-<script>
-  // 有効時間（検証用：2025年7月30日 22:25〜22:35）
-  const startTimeJST = new Date("2025-07-30T22:25:00+09:00").getTime();
-  const endTimeJST   = new Date("2025-07-30T22:35:00+09:00").getTime();
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>QRコード読み取りと撮影</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1em;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin: 0.5em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 1em;
+      color: red;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+    #keywordDisplay {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>QRコード読み取りと撮影</h1>
+  <div id="keywordDisplay">答え: （未取得）</div>
+  <video id="video" autoplay playsinline muted></video>
+  <br>
+  <button onclick="capture()">撮影する</button>
+  <button onclick="saveImage()">保存する</button>
+  <div id="message"></div>
+  <canvas id="canvas" style="display:none;"></canvas>
 
-  function isWithinAllowedTime() {
-    const now = Date.now();
-    return now >= startTimeJST && now <= endTimeJST;
-  }
+  <script>
+    // 有効時間（検証用：2025年7月30日 22:25〜22:35）
+    const startTimeJST = new Date("2025-07-30T22:25:00+09:00").getTime();
+    const endTimeJST   = new Date("2025-07-30T22:35:00+09:00").getTime();
 
-  function startScan() {
-    const messageEl = document.getElementById("message");
-    messageEl.innerHTML = "";
-
-    if (!isWithinAllowedTime()) {
-      messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年7月30日 22:25〜22:35";
-      return;
+    function isWithinAllowedTime() {
+      const now = Date.now();
+      return now >= startTimeJST && now <= endTimeJST;
     }
 
-    window.location.href = "next.html";
-  }
-</script>
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          document.getElementById("video").srcObject = stream;
+        })
+        .catch(err => {
+          alert("カメラにアクセスできません：" + err.message);
+        });
+    }
 
+    function capture() {
+      const messageEl = document.getElementById("message");
+      messageEl.innerHTML = "";
+
+      if (!isWithinAllowedTime()) {
+        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年7月30日 22:25〜22:35";
+        return;
+      }
+
+      const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`答え: ${keyword}`, 20, canvas.height - 30);
+    }
+
+    function saveImage() {
+      const canvas = document.getElementById("canvas");
+      const link = document.createElement("a");
+      link.download = "photo.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      startCamera();
+      const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      document.getElementById("keywordDisplay").textContent = `答え: ${keyword}`;
+    });
+  </script>
+</body>
+</html>
