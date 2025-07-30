@@ -28,7 +28,7 @@
       color: white;
     }
     #nextBtn {
-      background-color: #4CAF50; /* 緑ボタンで統一 */
+      background-color: #4CAF50;
       color: white;
       display: none;
     }
@@ -36,6 +36,11 @@
       margin-top: 1em;
       font-weight: bold;
       color: red;
+    }
+    #timeMessage {
+      margin-top: 1em;
+      font-weight: bold;
+      color: orange;
     }
   </style>
 </head>
@@ -47,6 +52,7 @@
   <button id="confirmBtn" onclick="checkAnswer()">確認</button>
   <button id="nextBtn" onclick="goNext()">次へ進む</button>
   <p id="result"></p>
+  <p id="timeMessage"></p>
 
   <script>
     function checkAnswer() {
@@ -55,19 +61,14 @@
       const nextBtn = document.getElementById("nextBtn");
 
       if (input === "あか") {
-        result.textContent = ""; // 正解テキストは表示しない
-        sessionStorage.setItem("keyword", input); // キーワード保存
-        nextBtn.style.display = "inline-block"; // 緑ボタン表示
+        result.textContent = "";
+        sessionStorage.setItem("keyword", input);
+        nextBtn.style.display = "inline-block";
       } else {
         result.textContent = "不正解です。もう一度考えてみてください。";
-        nextBtn.style.display = "none"; // ボタン非表示
+        nextBtn.style.display = "none";
       }
     }
 
     function goNext() {
-      location.href = "next.html"; // 遷移先は適宜変更
-    }
-  </script>
-</body>
-</html>
-
+      const
