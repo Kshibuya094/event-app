@@ -1,42 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スマホ対応カメラ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      padding: 2em;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    .notice {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 1em;
+      font-size: 1em;
+    }
+    .guide-btn {
+      display: inline-block;
+      margin: 1em auto;
+      padding: 1em 2em;
+      font-size: 1em;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 1em;
+      background: #000;
+      border-radius: 12px;
+    }
+    #captureBtn {
+      margin: 1em;
+      padding: 1em 2em;
+      font-size: 1.1em;
+      background: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
 <body>
-  <h2>📸 撮影ページ</h2>
-  <video id="video" autoplay></video><br>
-  <button onclick="takePhoto()">撮影する</button>
+  <h1>スマホ対応カメラ映像</h1>
+
+  <p class="notice">
+    ※スマホで映像が表示されない場合は、<strong>ブラウザの「PC表示モード」</strong>に切り替えてください。
+  </p>
+
+  <button class="guide-btn" onclick="alert('Safariの場合：共有ボタン →「デスクトップ用Webサイトを表示」\nChromeの場合：メニュー →「PC版サイト」')">
+    PC表示モードの切り替え方法を見る
+  </button>
+
+  <video id="video" autoplay playsinline muted></video>
+  <button id="captureBtn">撮影する</button>
   <canvas id="canvas" style="display:none;"></canvas>
 
   <script>
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => video.srcObject = stream)
-      .catch(err => alert("カメラが使えません"));
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        setTimeout(() => {
+          video.play().catch(err => {
+            console.error('video.play() 失敗:', err);
+          });
+        }, 100);
+      } catch (err) {
+        console.error('カメラ取得失敗:', err);
+        alert('カメラの起動に失敗しました: ' + err.message);
+      }
+    }
 
-    function takePhoto() {
-      const ctx = canvas.getContext("2d");
+    captureBtn.addEventListener('click', () => {
+      const ctx = canvas.getContext('2d');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'block';
+    });
 
-      // 整理番号生成（連番）
-      let serialNum = sessionStorage.getItem("serialNum");
-      if (!serialNum) serialNum = 1;
-      else serialNum = parseInt(serialNum) + 1;
-      const serial = serialNum.toString().padStart(4, "0");
-
-      // 整理番号を画像に描画
-      ctx.font = "40px sans-serif";
-      ctx.fillStyle = "blue";
-      ctx.fillText(serial, 20, 50);
-
-      // 保存
-      const photoData = canvas.toDataURL("image/png");
-      sessionStorage.setItem("photoData", photoData);
-      sessionStorage.setItem("serial", serial);
-      sessionStorage.setItem("serialNum", serialNum);
-
-      // 自動遷移
-      location.href = "ticket.html";
-    }
+    window.addEventListener('DOMContentLoaded', startCamera);
   </script>
 </body>
+</html>
+
