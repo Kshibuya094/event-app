@@ -2,100 +2,55 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>スマホ対応カメラ</title>
+  <title>QRコード読み取り</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      font-family: sans-serif;
       text-align: center;
       padding: 2em;
-      font-family: sans-serif;
-      background: #f0f0f0;
     }
-    h1 {
-      margin-bottom: 1em;
-    }
-    .notice {
+    #message {
+      margin-top: 1em;
       color: red;
       font-weight: bold;
-      margin-bottom: 1em;
-      font-size: 1em;
+      white-space: pre-line;
     }
-    .guide-btn {
-      display: inline-block;
-      margin: 1em auto;
+    #startBtn {
+      font-size: 1.2em;
       padding: 1em 2em;
-      font-size: 1em;
-      background: #ff9800;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    video, canvas {
-      width: 100%;
-      max-width: 480px;
-      margin-top: 1em;
-      background: #000;
-      border-radius: 12px;
-    }
-    #captureBtn {
-      margin: 1em;
-      padding: 1em 2em;
-      font-size: 1.1em;
-      background: #0078D4;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      margin-top: 2em;
     }
   </style>
 </head>
 <body>
-  <h1>スマホ対応カメラ映像</h1>
-
-  <p class="notice">
-    ※スマホで映像が表示されない場合は、<strong>ブラウザの「PC表示モード」</strong>に切り替えてください。
-  </p>
-
-  <button class="guide-btn" onclick="alert('Safariの場合：共有ボタン →「デスクトップ用Webサイトを表示」\nChromeの場合：メニュー →「PC版サイト」')">
-    PC表示モードの切り替え方法を見る
-  </button>
-
-  <video id="video" autoplay playsinline muted></video>
-  <button id="captureBtn">撮影する</button>
-  <canvas id="canvas" style="display:none;"></canvas>
+  <h1>QRコード読み取り</h1>
+  <p>カメラを起動してQRコードを読み取ります。</p>
+  <button id="startBtn" onclick="startScan()">読み取り開始</button>
+  <div id="message"></div>
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const captureBtn = document.getElementById('captureBtn');
+    // 有効時間設定（現場で変更する場合はここを修正）
+    const startTime = new Date("2025-08-01T10:00:00+09:00");
+    const endTime   = new Date("2025-08-01T10:10:00+09:00");
 
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        setTimeout(() => {
-          video.play().catch(err => {
-            console.error('video.play() 失敗:', err);
-          });
-        }, 100);
-      } catch (err) {
-        console.error('カメラ取得失敗:', err);
-        alert('カメラの起動に失敗しました: ' + err.message);
-      }
+    function isWithinAllowedTime() {
+      const now = new Date();
+      return now >= startTime && now <= endTime;
     }
 
-    captureBtn.addEventListener('click', () => {
-      const ctx = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = 'block';
-    });
+    function startScan() {
+      const messageEl = document.getElementById("message");
+      messageEl.innerHTML = "";
 
-    window.addEventListener('DOMContentLoaded', startCamera);
+      if (!isWithinAllowedTime()) {
+        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年8月1日 10:00〜10:10";
+        return;
+      }
+
+      // ここにQR読み取り処理を実装（または ticket.html へ遷移）
+      window.location.href = "ticket.html"; // ←必要に応じて変更
+    }
   </script>
 </body>
 </html>
-
-
