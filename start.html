@@ -28,8 +28,8 @@
   </style>
 </head>
 <body>
-  <h2>受付</h2>
-  <p>受付時間：23:20〜23:25</p>
+  <h2>イベント受付</h2>
+  <p>受付時間：23:25〜23:30</p>
   <button onclick="checkTime()">受付を開始する</button>
   <p id="message"></p>
 
@@ -37,12 +37,13 @@
     function checkTime() {
       const now = new Date();
       const hour = now.getHours();
+      const minute = now.getMinutes();
       const message = document.getElementById("message");
 
-      if (hour >= 10 && hour < 17) {
+      if (hour === 23 && minute >= 25 && minute < 30) {
         location.href = "index.html";
       } else {
-        message.textContent = "現在は受付時間外です。時間内にQRコードを再度読み込んでください。";
+        message.textContent = "現在は受付時間外です（23:25〜23:30のみ進行可能）";
       }
     }
   </script>
