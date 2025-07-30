@@ -18,6 +18,7 @@
       color: red;
       font-weight: bold;
       margin-bottom: 1em;
+      font-size: 1em;
     }
     .guide-btn {
       display: inline-block;
@@ -37,7 +38,7 @@
       background: #000;
       border-radius: 12px;
     }
-    button {
+    #captureBtn {
       margin: 1em;
       padding: 1em 2em;
       font-size: 1.1em;
@@ -51,10 +52,15 @@
 </head>
 <body>
   <h1>スマホ対応カメラ映像</h1>
-  <p class="notice">※スマホで映像が表示されない場合は、ブラウザの「PC表示モード」に切り替えてください。</p>
+
+  <p class="notice">
+    ※スマホで映像が表示されない場合は、<strong>ブラウザの「PC表示モード」</strong>に切り替えてください。
+  </p>
+
   <button class="guide-btn" onclick="alert('Safariの場合：共有ボタン →「デスクトップ用Webサイトを表示」\nChromeの場合：メニュー →「PC版サイト」')">
     PC表示モードの切り替え方法を見る
   </button>
+
   <video id="video" autoplay playsinline muted></video>
   <button id="captureBtn">撮影する</button>
   <canvas id="canvas" style="display:none;"></canvas>
@@ -91,4 +97,5 @@
   </script>
 </body>
 </html>
+
 
