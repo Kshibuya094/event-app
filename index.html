@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クイズページ</title>
+</head>
+<body>
+  <h2>問題：消防車の色は？</h2>
+  <p>答え（ひらがな）を入力してください：</p>
+  <input type="text" id="answer">
+  <button onclick="checkAnswer()">確認</button>
+  <p id="result"></p>
+
+  <script>
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim();
+      const result = document.getElementById("result");
+
+      if (input === "あか") {
+        result.textContent = "正解です！次のステップへ進んでください。";
+        sessionStorage.setItem("keyword", input); // キーワード保存
+        setTimeout(() => {
+          location.href = "next.html"; // ページ遷移
+        }, 1500); // 1.5秒後に遷移
+      } else {
+        result.textContent = "不正解です。もう一度考えてみてください。";
+      }
+    }
+  </script>
+</body>
+</html>
