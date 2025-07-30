@@ -11,7 +11,7 @@
       font-family: sans-serif;
       background: #f0f0f0;
     }
-    #captureBtn, #saveBtn {
+    #captureBtn, #saveBtn, #nextBtn {
       margin: 1em;
       padding: 1em 2em;
       font-size: 1.1em;
@@ -32,27 +32,24 @@
       font-weight: bold;
       margin-top: 1em;
     }
-    .guide-btn {
-      margin-top: 3em;
-      padding: 1em 2em;
-      font-size: 1em;
-      background: #ff9800;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    .notice {
+      font-size: 0.95em;
+      color: #d32f2f;
+      margin-top: 0.5em;
+    }
+    #nextBtn {
+      background: #4CAF50;
+      display: none;
     }
   </style>
 </head>
 <body>
   <video id="video" autoplay playsinline muted></video>
+  <div class="notice">※顔がはっきり映るように撮影してください</div>
   <button id="captureBtn">撮影する</button>
   <button id="saveBtn" style="display:none;">画像を保存する</button>
   <div class="serial" id="serialNumber" style="display:none;">整理番号: #0001</div>
-
-  <button class="guide-btn" onclick="alert('Safariの場合：共有ボタン →「デスクトップ用Webサイトを表示」\nChromeの場合：メニュー →「PC版サイト」')">
-    PC表示モードの切り替え方法を見る
-  </button>
+  <button id="nextBtn">次へ進む</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
 
@@ -62,8 +59,10 @@
     const captureBtn = document.getElementById('captureBtn');
     const saveBtn = document.getElementById('saveBtn');
     const serialNumber = document.getElementById('serialNumber');
+    const nextBtn = document.getElementById('nextBtn');
 
     let serialCount = 1;
+    let imageSaved = false;
 
     async function startCamera() {
       try {
@@ -95,11 +94,20 @@
       link.download = 'photo.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
+      imageSaved = true;
+      nextBtn.style.display = 'inline-block';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (!imageSaved) {
+        alert('画像を保存してから次へ進んでください');
+        return;
+      }
+      window.location.href = 'confirm.html'; // 次のページへ（必要に応じて変更）
     });
 
     window.addEventListener('DOMContentLoaded', startCamera);
   </script>
 </body>
 </html>
-
 
