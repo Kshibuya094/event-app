@@ -28,6 +28,10 @@
       color: white;
       display: none;
     }
+    #nextBtn:disabled {
+      background: #a5d6a7;
+      cursor: not-allowed;
+    }
     video {
       width: 100%;
       max-width: 480px;
@@ -74,7 +78,7 @@
     入場時に保存画像を確認します。
   </div>
 
-  <button id="nextBtn">次へ進む</button>
+  <button id="nextBtn" disabled>次へ進む</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
 
@@ -130,6 +134,7 @@
       if (correct) {
         alert('正解です！');
         isAnsweredCorrectly = true;
+        nextBtn.style.display = 'inline-block';
         checkReady();
       } else {
         alert('不正解です。もう一度選んでください。');
@@ -137,12 +142,17 @@
     }
 
     function checkReady() {
-      if (imageSaved && isAnsweredCorrectly) {
+      if (isAnsweredCorrectly) {
         nextBtn.style.display = 'inline-block';
+        nextBtn.disabled = !imageSaved;
       }
     }
 
     nextBtn.addEventListener('click', () => {
+      if (!imageSaved) {
+        alert('画像を保存してから次へ進んでください');
+        return;
+      }
       window.location.href = 'confirm.html'; // 次のページへ（必要に応じて変更）
     });
 
