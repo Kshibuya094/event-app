@@ -13,21 +13,29 @@
     #message {
       margin-top: 1em;
       color: red;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 1em 2em;
+      margin-top: 2em;
     }
   </style>
 </head>
 <body>
   <h1>QRコード読み取り</h1>
+  <p>QRコードを読み取ってイベントに進みます。</p>
   <button onclick="startScan()">読み取り開始</button>
   <div id="message"></div>
 
   <script>
     // 有効時間（日本時間で明示）
-    const startTimeJST = new Date("2025-07-30T21:50:00+09:00").getTime();
-    const endTimeJST   = new Date("2025-07-30T22:10:00+09:00").getTime();
+    const startTimeJST = new Date("2025-08-01T10:00:00+09:00").getTime();
+    const endTimeJST   = new Date("2025-08-01T10:10:00+09:00").getTime();
 
     function isWithinAllowedTime() {
-      const now = Date.now(); // 現在時刻（ミリ秒）
+      const now = Date.now();
       return now >= startTimeJST && now <= endTimeJST;
     }
 
@@ -36,12 +44,12 @@
       messageEl.innerHTML = "";
 
       if (!isWithinAllowedTime()) {
-        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年7月30日 21:50〜22:10";
+        messageEl.innerHTML = "現在はQRコードの読み取り時間外です。<br>有効時間：2025年8月1日 10:00〜10:10";
         return;
       }
 
-      // QR読み取り処理（または ticket.html へ遷移）
-      window.location.href = "ticket.html";
+      // 次の画面へ（next.html）
+      window.location.href = "next.html";
     }
   </script>
 </body>
