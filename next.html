@@ -15,6 +15,7 @@
       max-width: 300px;
       border: 1px solid #ccc;
       margin-bottom: 1em;
+      border-radius: 8px;
     }
     button {
       font-size: 1em;
@@ -37,7 +38,8 @@
       color: red;
       font-weight: bold;
       display: none;
-      margin-top: 0.5em;
+      margin-top: 1em;
+      line-height: 1.6;
     }
     #savedImage {
       margin-top: 1em;
@@ -46,10 +48,11 @@
 </head>
 <body>
   <h2>画像を撮影してください</h2>
-  <video id="video" autoplay></video>
+  <video id="video" autoplay playsinline muted></video>
   <br>
   <button id="captureBtn" onclick="capture()">撮影する</button>
-  <p id="warning">＊画像を保存してください</p>
+  <br><br>
+  <p id="warning">＊画像を保存してください。保存されていない場合、入場できません。入場時に保存画像を確認します。</p>
   <button id="saveBtn" onclick="saveImage()">保存する</button>
 
   <canvas id="canvas" style="display:none;"></canvas>
@@ -62,49 +65,48 @@
     const warning = document.getElementById("warning");
     const saveBtn = document.getElementById("saveBtn");
 
-    // カメラ起動
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
+    let serialCount = 1;
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
-      })
-      .catch(err => {
-        alert("カメラにアクセスできません：" + err);
-      });
+        await video.play();
+      } catch (err) {
+        alert("カメラにアクセスできません：" + err.message);
+      }
+    }
 
     function capture() {
       const keyword = sessionStorage.getItem("keyword") || "（未取得）";
-      const serial = generateSerial();
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const imgData = canvas.toDataURL("image/png");
+      // 整理番号と答えを画像に描画
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`整理番号: #${serialCount}`, 20, canvas.height - 45);
+      ctx.fillText(`答え: ${keyword}`, 20, canvas.height - 15);
 
-      savedImage.innerHTML = `
-        <p>保存された画像：</p>
-        <img src="${imgData}" width="300"><br>
-        <p>整理番号：${serial}</p>
-        <p>答え：${keyword}</p>
-      `;
+      serialCount++;
 
       warning.style.display = "block";
       saveBtn.style.display = "inline-block";
     }
 
     function saveImage() {
-      // 保存処理は現場仕様に応じて実装（ここでは次ページ遷移）
-      location.href = "confirm.html";
+      const link = document.createElement("a");
+      link.download = "photo.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     }
 
-    function generateSerial() {
-      // 整理番号生成（例：日時＋ランダム）
-      const now = new Date();
-      const ymd = now.toISOString().slice(0,10).replace(/-/g,"");
-      const rand = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
-      return `${ymd}-${rand}`;
-    }
+    window.addEventListener("DOMContentLoaded", startCamera);
   </script>
 </body>
 </html>
