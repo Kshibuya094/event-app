@@ -64,6 +64,27 @@
     #saveSection button {
       vertical-align: middle;
     }
+    /* 画面フラッシュ用のCSS */
+    #flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      opacity: 0;
+      display: none;
+      z-index: 100;
+    }
+    @keyframes flash-animation {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .flash-active {
+      display: block;
+      animation: flash-animation 0.2s ease-out;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +93,8 @@
   <br>
   <button id="captureBtn" onclick="capture()">撮影する</button>
   <br>
+
+    <div id="flash"></div>
 
   <ul id="warning">
     <li>＊「整理券を保存」を押して、画像をダウンロードしてください。</li>
@@ -96,6 +119,7 @@
     const warning = document.getElementById("warning");
     const saveSection = document.getElementById("saveSection");
     const nextBtn = document.getElementById("nextBtn");
+    const flashElement = document.getElementById("flash");
 
     let serialCount = 1;
 
@@ -110,6 +134,12 @@
     }
 
     function capture() {
+      // 画面フラッシュアニメーションを実行
+      flashElement.classList.add("flash-active");
+      setTimeout(() => {
+        flashElement.classList.remove("flash-active");
+      }, 200); // アニメーション時間に合わせて調整
+
       const keyword = sessionStorage.getItem("keyword") || "（未取得）";
 
       canvas.width = video.videoWidth;
@@ -127,29 +157,10 @@
       serialCount++;
 
       warning.style.display = "block";
-      saveSection.style.display = "block"; // 新しく追加した要素を表示
+      saveSection.style.display = "block";
     }
 
     function saveImage() {
       const checkbox = document.getElementById("agreeCheckbox");
       if (!checkbox.checked) {
-        alert("注意事項を確認し、チェックボックスに✔を入れてください。");
-        return;
-      }
-
-      const link = document.createElement("a");
-      link.download = "photo.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-
-      nextBtn.style.display = "inline-block";
-    }
-
-    function goNext() {
-      location.href = "https://0101event.eventos.tokyo/web/portal/784/event/8393/module/ticket/311469?ticketLargeCategoryId=13357";
-    }
-
-    window.addEventListener("DOMContentLoaded", startCamera);
-  </script>
-</body>
-</html>
+        alert("注意事項を確認
