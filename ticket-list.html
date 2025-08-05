@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>整理券一覧</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>整理券一覧</h1>
+  <table id="ticketTable">
+    <thead>
+      <tr>
+        <th>番号</th>
+        <th>名前</th>
+        <th>日時</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+    const tbody = document.querySelector('#ticketTable tbody');
+
+    tickets.forEach((ticket, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${ticket.name}</td>
+        <td>${ticket.date}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  </script>
+</body>
+</html>
