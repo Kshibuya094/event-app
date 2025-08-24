@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>画像撮影</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      padding: 2em;
+      font-family: sans-serif;
+    }
+    video, canvas {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      margin-bottom: 1em;
+      border-radius: 8px;
+      transition: box-shadow 0.2s ease;
+    }
+    .video-flash {
+      box-shadow: 0 0 0 4px white;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 0.5em;
+      transition: transform 0.1s ease;
+    }
+    .pressed {
+      transform: scale(0.95);
+    }
+    #captureBtn {
+      background-color: #2196F3;
+      color: white;
+    }
+    #captureBtn.disabled {
+      background-color: #888;
+      cursor: default;
+      pointer-events: none;
+    }
+    #saveBtn {
+      background-color: #4CAF50;
+      color: white;
+      display: none;
+    }
+    #saveBtn.disabled {
+      background-color: #888;
+      cursor: default;
+      pointer-events: none;
+    }
+    #warning {
+      color: red;
+      font-weight: bold;
+      display: none;
+      margin-top: 1em;
+      line-height: 1.8;
+      text-align: left;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #saveSection {
+      display: none;
+      margin-top: 1em;
+    }
+    #saveSection label {
+      font-size: 0.9em;
+      color: #333;
+    }
+
+    /* 黒フラッシュ演出 */
+    #flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      opacity: 0;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    @keyframes flash-animation {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .flash-active {
+      display: block;
+      animation: flash-animation 0.2s ease-out;
+    }
+
+    /* 完了演出 */
+    #checkPopup {
+      display: none;
+      font-size: 2em;
+      color: #4CAF50;
+      margin-top: 1em;
+    }
+    #completeMessage {
+      display: none;
+      color: green;
+      font-weight: bold;
+      margin-top: 0.5em;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <h2>画像を撮影してください</h2>
+  <video id="video" autoplay playsinline muted></video>
+  <br>
+  <button id="captureBtn" onclick="capture()">撮影する</button>
+  <br>
+
+  <div id="flash"></div>
+
+  <div id="warning">
+    ＊「整理券を保存」を押して、画像をダウンロードしてください。<br>
+    ＊保存した画像が整理券となります。<br>
+    ＊ご入場の際に、保存された画像を確認いたします。
+  </div>
+
+  <div id="saveSection">
+    <input type="checkbox" id="agreeCheckbox">
+    <label for="agreeCheckbox">上記注意事項を確認しました</label>
+    <br>
+    <button id="saveBtn" onclick="saveImage()">整理券を保存</button>
+  </div>
+
+  <div id="checkPopup">✔</div>
+  <div id="completeMessage">お申込みが完了しました。</div>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+  <div id="qrTemp" style="display:none;"></div>
+
+  <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const warning = document.getElementById("warning");
+    const saveSection = document.getElementById("saveSection");
+    const saveBtn = document.getElementById("saveBtn");
+    const agreeCheckbox = document.getElementById("agreeCheckbox");
+    const flashElement = document.getElementById("flash");
+    const captureBtn = document.getElementById("captureBtn");
+    const checkPopup = document.getElementById("checkPopup");
+    const completeMessage = document.getElementById("completeMessage");
+    const qrDiv = document.getElementById("qrTemp");
+
+    let serialCount = 1;
+    let currentSerial = "";
+
+    window.addEventListener("load", startCamera);
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        await video.play();
+      } catch (err) {
+        alert("カメラにアクセスできません：" + err.message);
+      }
+    }
+
+    function capture() {
+      flashElement.classList.add("flash-active");
+      setTimeout(() => {
+        flashElement.classList.remove("flash-active");
+      }, 200);
+
+      captureBtn.classList.add("pressed");
+      setTimeout(() => {
+        captureBtn.classList.remove("pressed");
+      }, 150);
+
+      video.classList.add("video-flash");
+      setTimeout(() => {
+        video.classList.remove("video-flash");
+      }, 200);
+
+      const keyword = sessionStorage.getItem("keyword") || "（未取得）";
+      const prefix = sessionStorage.getItem("prefix") || "A";
+
+      currentSerial = `${prefix}${String(serialCount).padStart(4, "0")}`;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.fillText(`整理番号: ${currentSerial}`, 20, canvas.height - 65);
+      ctx.fillText(`答え: ${keyword}`, 20, canvas.height - 30);
+
+      // QRコード生成
+      qrDiv.innerHTML = "";
+      new QRCode(qrDiv, {
+        text: currentSerial,
+        width: 80,
+        height: 80,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const qrCanvas = qrDiv.querySelector("canvas");
+      if (qrCanvas) {
+        ctx.drawImage(qrCanvas, canvas.width - 100, canvas.height - 90, 80, 80);
+      }
+
+      serialCount++;
+
+      warning.style.display = "block";
+      saveSection.style.display = "block";
+
+      captureBtn.classList.add("disabled");
+    }
+
+    agreeCheckbox.addEventListener("change", () => {
+      saveBtn.style.display = agreeCheckbox.checked ? "inline-block" : "none";
+    });
+
+    function saveImage() {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/jpeg");
+      link.download = `整理券_${currentSerial}.jpg`;
+      link.click();
+
+      saveBtn.classList.add("disabled");
+
+      checkPopup.style.display = "block";
+      completeMessage.style.display = "block";
+    }
+  </script>
+</body>
+</html>

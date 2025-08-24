@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アークナイツPOP UP SHOP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { text-align: center; padding: 2em; font-family: sans-serif; }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin-top: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    #note { margin-top: 1em; font-size: 0.9em; color: gray; }
+  </style>
+</head>
+<body>
+  <h2 id="title">アークナイツPOP UP SHOP</h2>
+  <p>整理券取得可能日時：</p>
+  <p id="timeRange"></p>
+  <button onclick="start()">整理券取得を開始する</button>
+  <p id="note">※1端末1回のみ取得可能です。</p>
+
+  <script>
+    const config = JSON.parse(localStorage.getItem("config"));
+    document.getElementById("title").textContent = config.title;
+    document.getElementById("timeRange").textContent = `${config.start}〜${config.end}`;
+
+    function start() {
+      const now = new Date();
+      const startTime = new Date(config.start);
+      const endTime = new Date(config.end);
+
+      if (now < startTime || now > endTime) {
+        alert(`現在は整理券取得できません（${config.start}〜${config.end}限定）`);
+        location.href = "error.html";
+        return;
+      }
+
+      location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

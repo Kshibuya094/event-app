@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クイズページ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { text-align: center; padding: 2em; font-family: sans-serif; }
+    input {
+      font-size: 1em;
+      padding: 0.5em;
+      width: 200px;
+    }
+    button {
+      font-size: 1em;
+      padding: 0.6em 1.2em;
+      margin-top: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #confirmBtn { background-color: #2196F3; color: white; }
+    #nextBtn { background-color: #4CAF50; color: white; display: none; }
+    #result { margin-top: 1em; font-weight: bold; color: red; }
+  </style>
+</head>
+<body>
+  <h2 id="question">問題：</h2>
+  <p>答え（ひらがな）を入力してください：</p>
+  <input type="text" id="answer">
+  <br>
+  <button id="confirmBtn" onclick="checkAnswer()">確認</button>
+  <button id="nextBtn" onclick="goNext()">次へ進む</button>
+  <p id="result"></p>
+
+  <script>
+    const config = JSON.parse(localStorage.getItem("config"));
+    document.getElementById("question").textContent = `問題：${config.quizQuestion}`;
+
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim();
+      const result = document.getElementById("result");
+      const nextBtn = document.getElementById("nextBtn");
+
+      if (input === config.quizAnswer) {
+        result.textContent = "";
+        sessionStorage.setItem("keyword", input);
+        nextBtn.style.display = "inline-block";
+      } else {
+        result.textContent = "不正解です。もう一度考えてみてください。";
+        nextBtn.style.display = "none";
+      }
+    }
+
+    function goNext() {
+      location.href = "next.html";
+    }
+  </script>
+</body>
+</html>
